@@ -7,7 +7,7 @@ vim.api.nvim_create_user_command(
 )
 vim.keymap.set(
 	'n',
-	'<leader>f',
+	'<leader>x',
 	psql.psql_run_curr_buf,
 	{ desc = 'Execute the current buffer with psql' }
 )
