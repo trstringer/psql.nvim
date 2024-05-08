@@ -37,14 +37,16 @@ local function psql_run_file(sql_file)
 
 	local bufs = vim.api.nvim_list_bufs()
 	local foundoutput = false
+	local buff_is_hidden = false
 	for _, k in ipairs(bufs) do
 		local buf_name = vim.api.nvim_buf_get_name(k)
 		if string.find(buf_name, "psql.nvim.out$") ~= nil then
+			buff_is_hidden = vim.fn.getbufinfo(k)[1].hidden == 1
 			foundoutput = true
 			break
 		end
 	end
-	if not foundoutput then
+	if not foundoutput or buff_is_hidden then
 		vim.api.nvim_command("new")
 		vim.api.nvim_command(string.format("e %s", output_file))
 	end
