@@ -18,6 +18,12 @@ vim.api.nvim_create_user_command(
 	{}
 )
 
+vim.api.nvim_create_user_command(
+	"PsqlTemp",
+	psql.psql_temp,
+	{}
+)
+
 vim.keymap.set(
 	'x',
 	'<leader>x',

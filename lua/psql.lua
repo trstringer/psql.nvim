@@ -93,9 +93,17 @@ local function psql_run_curr_buf()
 	psql_run_file(current_buf_name)
 end
 
+local function psql_temp()
+	local tmp_sql_file = "/tmp/psql.tmp.sql"
+	os.execute(string.format("echo '-- psql:current' > %s", tmp_sql_file))
+	vim.api.nvim_command("new")
+	vim.api.nvim_command(string.format("e %s", tmp_sql_file))
+end
+
 return {
 	psql_run_curr_buf = psql_run_curr_buf,
 	psql_run_visual = psql_run_visual,
 	psql_cancel = psql_cancel,
-	psql_run_file = psql_run_file
+	psql_run_file = psql_run_file,
+	psql_temp = psql_temp
 }
