@@ -7,6 +7,62 @@ local function get_connection_name(line)
 	return connection_name
 end
 
+local function psql_run_ad_hoc(sql_command)
+	local output_file = "/tmp/psql.nvim.out"
+	local firstline = table.concat(vim.api.nvim_buf_get_lines(0, 0, 1, false), "")
+	local connection_name = get_connection_name(firstline)
+	if connection_name == nil or connection_name == "" then
+		print("Invalid psqlcm connection identifier. Should be '-- psql:<connection_name>'")
+		return
+	end
+	os.execute(string.format("echo > %s", output_file))
+
+	local run_string = string.format(
+		"psql $(psqlcm show %s) -c \"%s\" &> %s",
+		connection_name,
+		sql_command,
+		output_file
+	)
+	local job_id = vim.fn.jobstart(
+		run_string,
+		{
+			on_exit = function(_, _, _)
+				print("Query completed")
+				vim.api.nvim_command("checktime")
+			end
+		}
+	)
+	vim.g["psql_job_id"] = job_id
+
+	local bufs = vim.api.nvim_list_bufs()
+	local foundoutput = false
+	local buff_is_hidden = false
+	for _, k in ipairs(bufs) do
+		local buf_name = vim.api.nvim_buf_get_name(k)
+		if string.find(buf_name, "psql.nvim.out$") ~= nil then
+			buff_is_hidden = vim.fn.getbufinfo(k)[1].hidden == 1
+			foundoutput = true
+			break
+		end
+	end
+	if not foundoutput or buff_is_hidden then
+		vim.api.nvim_command("new")
+		vim.api.nvim_command(string.format("e %s", output_file))
+	end
+end
+
+local function psql_get_tables()
+	psql_run_ad_hoc("\\d+")
+end
+
+local function psql_get_databases()
+	psql_run_ad_hoc("\\l+")
+end
+
+local function psql_get_functions()
+	psql_run_ad_hoc("\\df+")
+end
+
 local function psql_run_file(sql_file)
 	local output_file = "/tmp/psql.nvim.out"
 	local firstline = table.concat(vim.api.nvim_buf_get_lines(0, 0, 1, false), "")
@@ -105,5 +161,8 @@ return {
 	psql_run_visual = psql_run_visual,
 	psql_cancel = psql_cancel,
 	psql_run_file = psql_run_file,
-	psql_temp = psql_temp
+	psql_temp = psql_temp,
+	psql_get_tables = psql_get_tables,
+	psql_get_databases = psql_get_databases,
+	psql_get_functions = psql_get_functions
 }
