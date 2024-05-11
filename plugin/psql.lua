@@ -42,6 +42,12 @@ vim.api.nvim_create_user_command(
 	{}
 )
 
+vim.api.nvim_create_user_command(
+	"PgFmt",
+	psql.psql_format,
+	{}
+)
+
 vim.keymap.set(
 	'x',
 	'<leader>x',

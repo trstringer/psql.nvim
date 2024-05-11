@@ -149,6 +149,16 @@ local function psql_run_curr_buf()
 	psql_run_file(current_buf_name)
 end
 
+local function psql_format()
+	local current_buf_name = vim.api.nvim_buf_get_name(0)
+	if not is_sql_file(current_buf_name) then
+		print("Not a SQL file!")
+		return
+	end
+	os.execute(string.format("pg_format -i %s", current_buf_name))
+	vim.api.nvim_command("edit")
+end
+
 local function psql_temp()
 	local tmp_sql_file = "/tmp/psql.tmp.sql"
 	os.execute(string.format("echo '-- psql:current' > %s", tmp_sql_file))
@@ -164,5 +174,6 @@ return {
 	psql_temp = psql_temp,
 	psql_get_tables = psql_get_tables,
 	psql_get_databases = psql_get_databases,
-	psql_get_functions = psql_get_functions
+	psql_get_functions = psql_get_functions,
+	psql_format = psql_format
 }
