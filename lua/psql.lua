@@ -12,7 +12,7 @@ local function psql_run_ad_hoc(sql_command)
 	local firstline = table.concat(vim.api.nvim_buf_get_lines(0, 0, 1, false), "")
 	local connection_name = get_connection_name(firstline)
 	if connection_name == nil or connection_name == "" then
-		print("Invalid psqlcm connection identifier. Should be '-- psql:<connection_name>'")
+		vim.notify("Invalid psqlcm connection identifier. Should be '-- psql:<connection_name>'", vim.log.levels.ERROR)
 		return
 	end
 	os.execute(string.format("echo > %s", output_file))
@@ -27,7 +27,7 @@ local function psql_run_ad_hoc(sql_command)
 		run_string,
 		{
 			on_exit = function(_, _, _)
-				print("Query completed")
+				vim.notify("Query completed")
 				vim.api.nvim_command("checktime")
 			end
 		}
@@ -68,7 +68,7 @@ local function psql_run_file(sql_file)
 	local firstline = table.concat(vim.api.nvim_buf_get_lines(0, 0, 1, false), "")
 	local connection_name = get_connection_name(firstline)
 	if connection_name == nil or connection_name == "" then
-		print("Invalid psqlcm connection identifier. Should be '-- psql:<connection_name>'")
+		vim.notify("Invalid psqlcm connection identifier. Should be '-- psql:<connection_name>'", vim.log.levels.ERROR)
 		return
 	end
 	os.execute(string.format("echo > %s", output_file))
@@ -84,7 +84,7 @@ local function psql_run_file(sql_file)
 		run_string,
 		{
 			on_exit = function(_, _, _)
-				print("Query completed")
+				vim.notify("Query completed")
 				vim.api.nvim_command("checktime")
 			end
 		}
@@ -112,7 +112,7 @@ local function psql_cancel()
 	local job_id = vim.g["psql_job_id"]
 	if job_id ~= nil then
 		vim.fn.jobstop(job_id)
-		print("Query cancelled")
+		vim.notify("Query cancelled")
 	end
 end
 
@@ -143,7 +143,7 @@ end
 local function psql_run_curr_buf()
 	local current_buf_name = vim.api.nvim_buf_get_name(0)
 	if not is_sql_file(current_buf_name) then
-		print("Not a SQL file!")
+		vim.notify("Not a SQL file!", vim.log.levels.ERROR)
 		return
 	end
 	psql_run_file(current_buf_name)
@@ -152,7 +152,7 @@ end
 local function psql_format()
 	local current_buf_name = vim.api.nvim_buf_get_name(0)
 	if not is_sql_file(current_buf_name) then
-		print("Not a SQL file!")
+		vim.notify("Not a SQL file!", vim.log.levels.ERROR)
 		return
 	end
 	os.execute(string.format("pg_format -i %s", current_buf_name))
