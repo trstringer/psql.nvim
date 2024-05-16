@@ -2,6 +2,18 @@
 
 PostgreSQL plugin for Neovim.
 
+## Installation
+
+To install this with lazy nvim, just add the following to your config:
+
+```lua
+require('lazy').setup({
+  {
+    "trstringer/psql"
+  }
+})
+```
+
 ## Usage
 
 Use [psqlcm](github.com/trstringer/psqlcm) to connect to your postgres database. Then run the following commands:
