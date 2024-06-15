@@ -12,7 +12,8 @@ local function psql_run_ad_hoc(sql_command)
 	local firstline = table.concat(vim.api.nvim_buf_get_lines(0, 0, 1, false), "")
 	local connection_name = get_connection_name(firstline)
 	if connection_name == nil or connection_name == "" then
-		vim.notify("Invalid psqlcm connection identifier. Should be '-- psql:<connection_name>'", vim.log.levels.ERROR)
+		vim.notify("Invalid psqlcm connection identifier. Should be '-- psql:<connection_name>'",
+			vim.log.levels.ERROR)
 		return
 	end
 	os.execute(string.format("echo > %s", output_file))
@@ -68,7 +69,8 @@ local function psql_run_file(sql_file)
 	local firstline = table.concat(vim.api.nvim_buf_get_lines(0, 0, 1, false), "")
 	local connection_name = get_connection_name(firstline)
 	if connection_name == nil or connection_name == "" then
-		vim.notify("Invalid psqlcm connection identifier. Should be '-- psql:<connection_name>'", vim.log.levels.ERROR)
+		vim.notify("Invalid psqlcm connection identifier. Should be '-- psql:<connection_name>'",
+			vim.log.levels.ERROR)
 		return
 	end
 	os.execute(string.format("echo > %s", output_file))
